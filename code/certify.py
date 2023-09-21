@@ -9,6 +9,9 @@ import torch
 import datetime
 from architectures import get_architecture
 
+from pathlib import Path
+datasets.config.DOWNLOADED_DATASETS_PATH = Path('/data/yuanpu')
+
 parser = argparse.ArgumentParser(description='Certify many examples')
 parser.add_argument("dataset", choices=DATASETS, help="which dataset")
 parser.add_argument("base_classifier", type=str, help="path to saved pytorch model of base classifier")
