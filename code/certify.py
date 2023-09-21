@@ -3,6 +3,9 @@ import argparse
 import os
 import setGPU
 import datasets
+from pathlib import Path
+datasets.config.DOWNLOADED_DATASETS_PATH = Path('/data/yuanpu')
+
 from datasets import get_dataset, DATASETS, get_num_classes
 from core import Smooth
 from time import time
@@ -10,8 +13,7 @@ import torch
 import datetime
 from architectures import get_architecture
 
-from pathlib import Path
-datasets.config.DOWNLOADED_DATASETS_PATH = Path('/data/yuanpu')
+
 
 parser = argparse.ArgumentParser(description='Certify many examples')
 parser.add_argument("dataset", choices=DATASETS, help="which dataset")
