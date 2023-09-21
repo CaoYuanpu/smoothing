@@ -2,10 +2,6 @@
 import argparse
 import os
 import setGPU
-import datasets
-from pathlib import Path
-datasets.config.DOWNLOADED_DATASETS_PATH = Path('/data/yuanpu')
-
 from datasets import get_dataset, DATASETS, get_num_classes
 from core import Smooth
 from time import time
