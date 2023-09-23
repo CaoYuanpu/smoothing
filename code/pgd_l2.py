@@ -21,6 +21,7 @@ args = parser.parse_args()
 class SmoothedClassifier(nn.Module):
     
     def __init__(self, base_classifier, sigma):
+        super(SmoothedClassifier, self).__init__()
         self.base_classifier = base_classifier
         self.sigma = sigma
 
