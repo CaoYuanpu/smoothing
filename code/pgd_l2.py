@@ -35,7 +35,7 @@ if __name__ == "__main__":
     for i in range(len(dataset)):
         (x, label) = dataset[i]
         x = x.cuda()
-        print(x.shape)
+        batch = x.repeat((1, 1, 1, 1))
+        print(batch.shape)
         input()
-    
     
