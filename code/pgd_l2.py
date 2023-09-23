@@ -36,6 +36,8 @@ if __name__ == "__main__":
 
         (x, label) = dataset[i]
         x = x.cuda()
+        print(torch.min(x), torch.max(x))
+        input()
         label = torch.tensor(label, dtype=torch.int64).cuda()
         batch = x.repeat((1, 1, 1, 1))
         label = label.repeat((1))
