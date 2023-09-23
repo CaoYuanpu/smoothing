@@ -43,7 +43,7 @@ if __name__ == "__main__":
         predictions = base_classifier(batch).argmax(1)
         print(predictions, label, predictions[0]==label[0])
         
-        adv_images = atk(batch, labels)
+        adv_images = atk(batch, label)
         adv_predictions = base_classifier(adv_images).argmax(1)
         print(adv_predictions, label, adv_predictions[0]==label[0])
         
