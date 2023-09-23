@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-import attack
+from .attack import Attack
 
 
 class PGDL2(Attack):
