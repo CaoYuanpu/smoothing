@@ -38,5 +38,5 @@ if __name__ == "__main__":
         x = x.cuda()
         batch = x.repeat((1, 1, 1, 1))
         predictions = base_classifier(batch).argmax(1)
-        print(predictions)
+        print(predictions, label, predictions[0]==label)
         input()
