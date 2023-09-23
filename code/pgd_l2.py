@@ -10,7 +10,8 @@ import torch.nn as nn
 
 import datetime
 from architectures import get_architecture
-import torchattacks
+# import torchattacks
+from attacks import pgdl2 as attack
 from tqdm import tqdm
 parser = argparse.ArgumentParser(description='Test PGD_l2 attack')
 parser.add_argument("dataset", choices=DATASETS, help="which dataset")
@@ -40,7 +41,7 @@ if __name__ == "__main__":
     
     # atk = torchattacks.APGDT(base_classifier, norm='L2', eps=0.5)
     # atk = torchattacks.PGDL2(base_classifier, eps=0.5, alpha=0.05, steps=20)
-    atk = torchattacks.PGDL2(smoothe_classifier, eps=0.5, alpha=0.1, steps=10)
+    atk = attack.PGDL2(smoothe_classifier, eps=0.5, alpha=0.1, steps=10)
     atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
     
     dataset = get_dataset(args.dataset, args.split)
@@ -57,11 +58,11 @@ if __name__ == "__main__":
         batch = x.repeat((1, 1, 1, 1))
         label = label.repeat((1))
 
-        predictions = smoothe_classifier(batch, noise=0.).argmax(1)
+        predictions = smoothe_classifier(batch).argmax(1)
         print(f'[{i}] clean: ', predictions, label, predictions[0]==label[0])
         
         adv_images = atk(batch, label)
-        adv_predictions = smoothe_classifier(adv_images, noise=0.).argmax(1)
+        adv_predictions = smoothe_classifier(adv_images).argmax(1)
         print(f'[{i}] adv: ', adv_predictions, label, adv_predictions[0]==label[0])
         print()
         if predictions[0]==label[0]:
