@@ -24,7 +24,7 @@ if __name__ == "__main__":
     base_classifier.load_state_dict(checkpoint['state_dict'])
     base_classifier.eval()
     
-    atk = torchattacks.PGDL2(base_classifier, eps=0.5)
+    atk = torchattacks.APGD(base_classifier, norm='L2', eps=0.5)
     
     dataset = get_dataset(args.dataset, args.split)
     n_cor = 0
