@@ -36,9 +36,9 @@ if __name__ == "__main__":
 
         (x, label) = dataset[i]
         x = x.cuda()
-        # label = label.cuda()
+        label = torch.tensor(label, dtype=torch.int64).cuda()
         batch = x.repeat((1, 1, 1, 1))
-        label = [label]
+        label = label.repeat((1, 1))
         
         predictions = base_classifier(batch).argmax(1)
         print(predictions, label, predictions[0]==label[0])
