@@ -25,6 +25,7 @@ if __name__ == "__main__":
     base_classifier.eval()
     
     atk = torchattacks.APGD(base_classifier, norm='L2', eps=0.5)
+    atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
     
     dataset = get_dataset(args.dataset, args.split)
     n_cor = 0
@@ -36,8 +37,6 @@ if __name__ == "__main__":
 
         (x, label) = dataset[i]
         x = x.cuda()
-        print(torch.min(x), torch.max(x))
-        input()
         label = torch.tensor(label, dtype=torch.int64).cuda()
         batch = x.repeat((1, 1, 1, 1))
         label = label.repeat((1))
