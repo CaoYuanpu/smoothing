@@ -35,12 +35,12 @@ if __name__ == "__main__":
     checkpoint = torch.load(args.base_classifier)
     base_classifier = get_architecture(checkpoint["arch"], args.dataset)
     base_classifier.load_state_dict(checkpoint['state_dict'])
-    smoothe_classifier = SmoothedClassifier(base_classifier, sigma=0.5)
+    smoothe_classifier = SmoothedClassifier(base_classifier, sigma=0.25)
     smoothe_classifier.eval()
     
     # atk = torchattacks.APGDT(base_classifier, norm='L2', eps=0.5)
     # atk = torchattacks.PGDL2(base_classifier, eps=0.5, alpha=0.05, steps=20)
-    atk = torchattacks.PGDL2(smoothe_classifier, eps=1.0, alpha=0.2, steps=10)
+    atk = torchattacks.PGDL2(smoothe_classifier, eps=0.5, alpha=0.1, steps=10)
     atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
     
     dataset = get_dataset(args.dataset, args.split)
