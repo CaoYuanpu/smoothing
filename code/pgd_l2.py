@@ -26,7 +26,7 @@ class SmoothedClassifier(nn.Module):
 
     def forward(self, x, noise=None):
         if noise is None:
-            noise = torch.randn_like(x, device=x.device()) * self.sigma
+            noise = torch.randn_like(x, device=x.device) * self.sigma
         return base_classifier(x+noise)
     
 if __name__ == "__main__":
@@ -34,11 +34,12 @@ if __name__ == "__main__":
     checkpoint = torch.load(args.base_classifier)
     base_classifier = get_architecture(checkpoint["arch"], args.dataset)
     base_classifier.load_state_dict(checkpoint['state_dict'])
-    base_classifier.eval()
+    smoothe_classifier = SmoothedClassifier(base_classifier, sigma=0.5)
+    smoothe_classifier.eval()
     
     # atk = torchattacks.APGDT(base_classifier, norm='L2', eps=0.5)
     # atk = torchattacks.PGDL2(base_classifier, eps=0.5, alpha=0.05, steps=20)
-    atk = torchattacks.PGDL2(base_classifier, eps=1.0, alpha=0.2, steps=10)
+    atk = torchattacks.PGDL2(smoothe_classifier, eps=1.0, alpha=0.2, steps=10)
     atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
     
     dataset = get_dataset(args.dataset, args.split)
@@ -57,11 +58,11 @@ if __name__ == "__main__":
         input()
         label = label.repeat((1))
 
-        predictions = base_classifier(batch).argmax(1)
+        predictions = smoothe_classifier(batch).argmax(1)
         print(f'[{i}] clean: ', predictions, label, predictions[0]==label[0])
         
         adv_images = atk(batch, label)
-        adv_predictions = base_classifier(adv_images).argmax(1)
+        adv_predictions = smoothe_classifier(adv_images).argmax(1)
         print(f'[{i}] adv: ', adv_predictions, label, adv_predictions[0]==label[0])
         print()
         if predictions[0]==label[0]:
