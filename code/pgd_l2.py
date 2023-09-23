@@ -33,10 +33,18 @@ if __name__ == "__main__":
     base_classifier.eval()
     
     dataset = get_dataset(args.dataset, args.split)
+    n_cor = 0
     for i in range(len(dataset)):
+
+        if i == 100:
+            break
+
         (x, label) = dataset[i]
         x = x.cuda()
         batch = x.repeat((1, 1, 1, 1))
         predictions = base_classifier(batch).argmax(1)
         print(predictions, label, predictions[0]==label)
+        if predictions[0]==label:
+            n_cor += 1
         input()
+    print('acc: ', n_cor/i)
