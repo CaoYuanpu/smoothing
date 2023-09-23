@@ -9,7 +9,7 @@ import torch
 import datetime
 from architectures import get_architecture
 import torchattacks
-
+from tqdm import tqdm
 parser = argparse.ArgumentParser(description='Test PGD_l2 attack')
 parser.add_argument("dataset", choices=DATASETS, help="which dataset")
 parser.add_argument("base_classifier", type=str, help="path to saved pytorch model of base classifier")
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     dataset = get_dataset(args.dataset, args.split)
     n_cor = 0
     n_adv_cor = 0
-    for i in range(len(dataset)):
+    for i in tqdm(range(len(dataset))):
 
         if i == 100:
             break
@@ -41,12 +41,12 @@ if __name__ == "__main__":
         label = label.repeat((1))
 
         predictions = base_classifier(batch).argmax(1)
-        print('clean: ', predictions, label, predictions[0]==label[0])
+        print(f'[{i}] clean: ', predictions, label, predictions[0]==label[0])
         
         adv_images = atk(batch, label)
         adv_predictions = base_classifier(adv_images).argmax(1)
-        print('adv: ', adv_predictions, label, adv_predictions[0]==label[0])
-        
+        print(f'[{i}] adv: ', adv_predictions, label, adv_predictions[0]==label[0])
+        print()
         if predictions[0]==label[0]:
             n_cor += 1
         
