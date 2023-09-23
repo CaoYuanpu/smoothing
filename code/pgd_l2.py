@@ -30,12 +30,13 @@ if __name__ == "__main__":
     checkpoint = torch.load(args.base_classifier)
     base_classifier = get_architecture(checkpoint["arch"], args.dataset)
     base_classifier.load_state_dict(checkpoint['state_dict'])
+    base_classifier.eval()
     
     dataset = get_dataset(args.dataset, args.split)
     for i in range(len(dataset)):
         (x, label) = dataset[i]
         x = x.cuda()
         batch = x.repeat((1, 1, 1, 1))
-        print(batch.shape)
+        predictions = base_classifier(batch).argmax(1)
+        print(predictions)
         input()
-    
