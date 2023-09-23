@@ -57,11 +57,11 @@ if __name__ == "__main__":
         batch = x.repeat((1, 1, 1, 1))
         label = label.repeat((1))
 
-        predictions = smoothe_classifier(batch).argmax(1)
+        predictions = smoothe_classifier(batch, noise=0.).argmax(1)
         print(f'[{i}] clean: ', predictions, label, predictions[0]==label[0])
         
         adv_images = atk(batch, label)
-        adv_predictions = smoothe_classifier(adv_images).argmax(1)
+        adv_predictions = smoothe_classifier(adv_images, noise=0.).argmax(1)
         print(f'[{i}] adv: ', adv_predictions, label, adv_predictions[0]==label[0])
         print()
         if predictions[0]==label[0]:
