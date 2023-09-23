@@ -53,7 +53,7 @@ if __name__ == "__main__":
         x = x.cuda()
         label = torch.tensor(label, dtype=torch.int64).cuda()
         batch = x.repeat((1, 1, 1, 1))
-        print(batch.device())
+        print(batch.device)
         input()
         label = label.repeat((1))
 
