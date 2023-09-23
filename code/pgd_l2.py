@@ -6,6 +6,8 @@ from datasets import get_dataset, DATASETS, get_num_classes
 from core import Smooth
 from time import time
 import torch
+import torch.nn as nn
+
 import datetime
 from architectures import get_architecture
 import torchattacks
@@ -16,6 +18,16 @@ parser.add_argument("base_classifier", type=str, help="path to saved pytorch mod
 parser.add_argument("--split", choices=["train", "test"], default="test", help="train or test set")
 args = parser.parse_args()
 
+class SmoothedClassifier(nn.Module):
+    
+    def __init__(self, base_classifier, sigma):
+        self.base_classifier = base_classifier
+        self.sigma = sigma
+
+    def forward(self, x, noise=None):
+        if noise is None:
+            noise = torch.randn_like(x, device=x.device()) * self.sigma
+        return base_classifier(x+noise)
     
 if __name__ == "__main__":
     # load the base classifier
@@ -41,6 +53,8 @@ if __name__ == "__main__":
         x = x.cuda()
         label = torch.tensor(label, dtype=torch.int64).cuda()
         batch = x.repeat((1, 1, 1, 1))
+        print(batch.device())
+        input()
         label = label.repeat((1))
 
         predictions = base_classifier(batch).argmax(1)
