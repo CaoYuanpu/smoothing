@@ -8,23 +8,15 @@ from time import time
 import torch
 import datetime
 from architectures import get_architecture
+import torchattacks
 
-# parser = argparse.ArgumentParser(description='Certify many examples')
 parser = argparse.ArgumentParser(description='Test PGD_l2 attack')
 parser.add_argument("dataset", choices=DATASETS, help="which dataset")
 parser.add_argument("base_classifier", type=str, help="path to saved pytorch model of base classifier")
-# parser.add_argument("sigma", type=float, help="noise hyperparameter")
-# parser.add_argument("outfile", type=str, help="output file")
-# parser.add_argument("--batch", type=int, default=1000, help="batch size")
-# parser.add_argument("--skip", type=int, default=1, help="how many examples to skip")
-# parser.add_argument("--max", type=int, default=-1, help="stop after this many examples")
 parser.add_argument("--split", choices=["train", "test"], default="test", help="train or test set")
-# parser.add_argument("--N0", type=int, default=100)
-# parser.add_argument("--N", type=int, default=100000, help="number of samples to use")
-# parser.add_argument("--alpha", type=float, default=0.001, help="failure probability")
 args = parser.parse_args()
 
-
+    
 if __name__ == "__main__":
     # load the base classifier
     checkpoint = torch.load(args.base_classifier)
@@ -32,8 +24,11 @@ if __name__ == "__main__":
     base_classifier.load_state_dict(checkpoint['state_dict'])
     base_classifier.eval()
     
+    atk = torchattacks.PGDL2(base_classifier, eps=0.5)
+    
     dataset = get_dataset(args.dataset, args.split)
     n_cor = 0
+    n_adv_cor = 0
     for i in range(len(dataset)):
 
         if i == 100:
@@ -41,10 +36,23 @@ if __name__ == "__main__":
 
         (x, label) = dataset[i]
         x = x.cuda()
+        label = label.cuda()
         batch = x.repeat((1, 1, 1, 1))
+        label = label.repear((1, 1))
+        
         predictions = base_classifier(batch).argmax(1)
-        print(predictions, label, predictions[0]==label)
-        if predictions[0]==label:
+        print(predictions, label, predictions[0]==label[0])
+        
+        adv_images = atk(batch, labels)
+        adv_predictions = base_classifier(adv_images).argmax(1)
+        print(adv_predictions, label, adv_predictions[0]==label[0])
+        
+        if predictions[0]==label[0]:
             n_cor += 1
-        input()
+        
+        if adv_predictions[0]==label[0]:
+            n_adv_cor += 1
+            
     print('acc: ', n_cor/i)
+    print('adv acc: ', n_adv_cor/i)
+    
