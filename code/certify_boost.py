@@ -86,7 +86,8 @@ if __name__ == "__main__":
         if label == predict:
             before_time = time()
             
-            pre_p_a_lower = norm.cdf(radius / args.sigma)
+            # pre_p_a_lower = norm.cdf(radius / args.sigma)
+
             x_ = x.repeat((1, 1, 1, 1))
             target = torch.tensor(label, dtype=torch.int64)
             target = target.repeat((1))
