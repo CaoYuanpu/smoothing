@@ -62,7 +62,7 @@ if __name__ == "__main__":
     
     # prepare output file
     f = open(args.outfile, 'w')
-    print("idx\tlabel\tpredict\tradius\tcorrect\ttime\tperturbation", file=f, flush=True)
+    print("idx\tlabel\tpredict\tradius\tcorrect\ttime\tdistance\tbudget", file=f, flush=True)
 
     # iterate through the dataset
     dataset = get_dataset(args.dataset, args.split)
@@ -95,18 +95,21 @@ if __name__ == "__main__":
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
             x_adv = atk(x_.cuda(), target.cuda())
 
-            print(torch.linalg.norm((x_adv - x_.cuda()).detach()[0]))
-            input()
             
+            
+
             # certify the prediction of g around x_adv
             prediction_adv, radius_adv = smoothed_classifier.certify(x_adv, args.N0, args.N, args.alpha, args.batch)
             after_time = time()
             correct = int(prediction_adv == label)
 
             time_elapsed = str(datetime.timedelta(seconds=(after_time - before_time)))
-            print("{}\t{}\t{}\t{:.3}\t{}\t{}".format(
-                i, label, prediction_adv, radius_adv, correct, time_elapsed), file=f, flush=True)
+            distance = torch.linalg.norm((x_adv - x_.cuda()).detach()[0]).cpu().numpy()
+            budget = radius_adv - radius
+            
+            print("{}\t{}\t{}\t{:.3}\t{}\t{}\t{}\t{}".format(
+                i, label, prediction_adv, radius_adv, correct, time_elapsed, distance, budget), file=f, flush=True)
         else:
-            print('\t'.join(res), file=f, flush=True)
+            print('\t'.join(res)[:-1], file=f, flush=True)
 
     f.close()
