@@ -43,12 +43,13 @@ class Smooth(object):
         counts_estimation = self._sample_noise(x, n, batch_size)
         # use these samples to estimate a lower bound on pA
         nA = counts_estimation[cAHat].item()
+        pAPrime = nA/n
         pABar = self._lower_confidence_bound(nA, n, alpha)
         if pABar < 0.5:
-            return Smooth.ABSTAIN, 0.0
+            return Smooth.ABSTAIN, 0.0, nA, pAPrime, pABar
         else:
             radius = self.sigma * norm.ppf(pABar)
-            return cAHat, radius
+            return cAHat, radius, nA, pAPrime, pABar
 
     def predict(self, x: torch.tensor, n: int, alpha: float, batch_size: int) -> int:
         """ Monte Carlo algorithm for evaluating the prediction of g at x.  With probability at least 1 - alpha, the

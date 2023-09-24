@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
     # prepare output file
     f = open(args.outfile, 'w')
-    print("idx\tlabel\tpredict\tradius\tcorrect\ttime", file=f, flush=True)
+    print("idx\tlabel\tpredict\tradius\tnA\tpAPrime\tpABar\tcorrect\ttime", file=f, flush=True)
 
     # iterate through the dataset
     dataset = get_dataset(args.dataset, args.split)
@@ -53,12 +53,12 @@ if __name__ == "__main__":
         before_time = time()
         # certify the prediction of g around x
         x = x.cuda()
-        prediction, radius = smoothed_classifier.certify(x, args.N0, args.N, args.alpha, args.batch)
+        prediction, radius, nA, pAPrime, pABar = smoothed_classifier.certify(x, args.N0, args.N, args.alpha, args.batch)
         after_time = time()
         correct = int(prediction == label)
 
         time_elapsed = str(datetime.timedelta(seconds=(after_time - before_time)))
-        print("{}\t{}\t{}\t{:.3}\t{}\t{}".format(
-            i, label, prediction, radius, correct, time_elapsed), file=f, flush=True)
+        print("{}\t{}\t{}\t{:.3}\t{}\t{:.3}\t{:.3}\t{}\t{}".format(
+            i, label, prediction, radius, nA, pAPrime, pABar, correct, time_elapsed), file=f, flush=True)
 
     f.close()
