@@ -28,7 +28,7 @@ parser.add_argument("--N", type=int, default=100000, help="number of samples to 
 parser.add_argument("--alpha", type=float, default=0.001, help="failure probability")
 args = parser.parse_args()
 
-certify_res_file_path = "/home/ymc5533/smoothing/result/certify_cifar10_0.25"
+certify_res_file_path = "/home/ymc5533/smoothing/result/certify_cifar10_0.50"
 
 class BoostClassifier(nn.Module):
     
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     
     # prepare output file
     f = open(args.outfile, 'w')
-    print("idx\tlabel\tpredict\tradius\tcorrect\ttime\tdistance\tbudget", file=f, flush=True)
+    print("idx\tlabel\tpredict\tradius\tnA\tpAPrime\tpABar\tcorrect\ttime\tdistance\tbudget", file=f, flush=True)
 
     # iterate through the dataset
     dataset = get_dataset(args.dataset, args.split)
@@ -91,13 +91,14 @@ if __name__ == "__main__":
             x_ = x.repeat((1, 1, 1, 1))
             target = torch.tensor(label, dtype=torch.int64)
             target = target.repeat((1))
-            atk = attack.EOTPGDL2(boost_classifier, eps=1.0, alpha=0.1, steps=10, eot_iter=10)
+            # atk = attack.EOTPGDL2(boost_classifier, eps=1.0, alpha=0.1, steps=10, eot_iter=10)
+            atk = attack.EOTPGDL2(boost_classifier, eps=radius, alpha=radius*2/10, steps=10, eot_iter=10)
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
             x_adv = atk(x_.cuda(), target.cuda())
             
 
             # certify the prediction of g around x_adv
-            prediction_adv, radius_adv = smoothed_classifier.certify(x_adv, args.N0, args.N, args.alpha, args.batch)
+            prediction_adv, radius_adv, nA, pAPrime, pABar = smoothed_classifier.certify(x_adv, args.N0, args.N, args.alpha, args.batch)
             after_time = time()
             correct = int(prediction_adv == label)
 
@@ -105,8 +106,8 @@ if __name__ == "__main__":
             distance = torch.linalg.norm((x_adv - x_.cuda()).detach()[0]).cpu().numpy()
             budget = radius_adv - radius
             
-            print("{}\t{}\t{}\t{:.3}\t{}\t{}\t{:.3}\t{:.3}".format(
-                i, label, prediction_adv, radius_adv, correct, time_elapsed, distance, budget), file=f, flush=True)
+            print("{}\t{}\t{}\t{:.3}\t{}\t{:.3}\t{:.3}\t{}\t{}\t{:.3}\t{:.3}".format(
+                i, label, prediction_adv, radius_adv, nA, pAPrime, pABar, correct, time_elapsed, distance, budget), file=f, flush=True)
         else:
             print('\t'.join(res)[:-1], file=f, flush=True)
 
