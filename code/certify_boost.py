@@ -33,7 +33,7 @@ certify_res_file_path = "/home/ymc5533/smoothing/result/certify_cifar10_0.25"
 class BoostClassifier(nn.Module):
     
     def __init__(self, base_classifier, sigma):
-        super(SmoothedClassifier, self).__init__()
+        super(BoostClassifier, self).__init__()
         self.base_classifier = base_classifier
         self.sigma = sigma
 
