@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # read certified result
     certify_res_file = open(certify_res_file_path)
-    certify_res_file.read_line()
+    certify_res_file.readline()
 
     
     # prepare output file
@@ -56,7 +56,7 @@ if __name__ == "__main__":
             break
 
         (x, label) = dataset[i]
-        res = certify_res_file.read_line()
+        res = certify_res_file.readline()
         res = res.split('\t')
         label = int(res[1])
         predict = int(res[2])
