@@ -89,7 +89,7 @@ if __name__ == "__main__":
             # pre_p_a_lower = norm.cdf(radius / args.sigma)
 
             x_ = x.repeat((1, 1, 1, 1))
-            cAHat = smoothed_classifier.guess(x_, args.N0, args.batch)
+            cAHat = smoothed_classifier.guess(x_.cuda(), args.N0, args.batch)
             print(label, cAHat)
             input()
         #     target = torch.tensor(label, dtype=torch.int64)
