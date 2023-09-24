@@ -6,6 +6,7 @@ from datasets import get_dataset, DATASETS, get_num_classes
 from core import Smooth
 from time import time
 import torch
+import torch.nn as nn
 import datetime
 from architectures import get_architecture
 
