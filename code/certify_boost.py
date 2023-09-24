@@ -91,7 +91,7 @@ if __name__ == "__main__":
             x_ = x.repeat((1, 1, 1, 1))
             target = torch.tensor(label, dtype=torch.int64)
             target = target.repeat((1))
-            atk = attack.EOTPGDL2(boost_classifier, eps=0.5, alpha=0.1, steps=10, eot_iter=10)
+            atk = attack.EOTPGDL2(boost_classifier, eps=1.0, alpha=0.1, steps=10, eot_iter=10)
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
             x_adv = atk(x_.cuda(), target.cuda())
             
