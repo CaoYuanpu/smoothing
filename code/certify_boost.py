@@ -107,7 +107,7 @@ if __name__ == "__main__":
             distance = torch.linalg.norm((x_adv - x_.cuda()).detach()[0]).cpu().numpy()
             budget = radius_adv - radius
             
-            print("{}\t{}\t{}\t{:.3}\t{}\t{}\t{}\t{}".format(
+            print("{}\t{}\t{}\t{:.3}\t{}\t{}\t{:.3}\t{:.3}".format(
                 i, label, prediction_adv, radius_adv, correct, time_elapsed, distance, budget), file=f, flush=True)
         else:
             print('\t'.join(res)[:-1], file=f, flush=True)
