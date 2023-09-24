@@ -95,7 +95,7 @@ if __name__ == "__main__":
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
             x_adv = atk(x_.cuda(), target.cuda())
 
-            print(torch.linalg.norm((x_adv - x_).detach()[0]))
+            print(torch.linalg.norm((x_adv - x_.cuda()).detach()[0]))
             input()
             
             # certify the prediction of g around x_adv
