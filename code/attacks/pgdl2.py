@@ -227,17 +227,12 @@ class NegtiveEOTPGDL2(Attack):
         labels = label.repeat(n_trials)
         noises = torch.randn_like(x_batch, device=x_batch.device) * sigma
         predictions = self.model(x_batch, noise=noises).argmax(1)
-        # indices = torch.squeeze((predictions!=label).nonzero())
-        indices = torch.squeeze((label!=label).nonzero())
-        print(indices, len(indices))
-        input()
-        print((predictions!=label))
-        print(torch.squeeze((predictions!=label).nonzero()))
-        print(torch.sum(predictions!=label))
-        adv_noise = [noises[i] for i in indices ]
-        print(len(adv_noise))
-        print(adv_noise[0].shape)
-        input()
+        indices = torch.squeeze((predictions!=label).nonzero())
+        if len(indices) == 0:
+            return None
+        else:
+            adv_noise = [noises[i] for i in indices]
+            return adv_noise
 
     def forward(self, images, labels):
         r"""
@@ -265,6 +260,11 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = torch.clamp(adv_images + delta, min=0, max=1).detach()
 
         for _ in range(self.steps):
+            print(adv_images.shape)
+            print(target_labels)
+            input()
+            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0])
+            
             grad = torch.zeros_like(adv_images)
             adv_images.requires_grad = True
             

@@ -93,9 +93,8 @@ if __name__ == "__main__":
             target = target.repeat((1))
             atk = attack.NegtiveEOTPGDL2(boost_classifier, eps=radius, alpha=radius*2/10, steps=10, eot_iter=1, random_start=False)
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
-            atk.get_negative_samples(x.cuda(), torch.tensor(label, dtype=torch.int64), sigma=args.sigma)
+            # negtive_noises = atk.get_negative_samples(x.cuda(), torch.tensor(label, dtype=torch.int64), sigma=args.sigma)
             x_adv = atk(x_.cuda(), target.cuda())
-
 
             # certify the prediction of g around x_adv
             prediction_adv, radius_adv, nA, pAPrime, pABar = smoothed_classifier.certify(x_adv, args.N0, args.N, args.alpha, args.batch)
