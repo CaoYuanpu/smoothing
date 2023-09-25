@@ -229,7 +229,7 @@ class NegtiveEOTPGDL2(Attack):
         predictions = self.model(x_batch, noise=noises).argmax(1)
         # indices = torch.squeeze((predictions!=label).nonzero())
         indices = torch.squeeze((label!=label).nonzero())
-        print(indices)
+        print(indices, len(indices))
         input()
         print((predictions!=label))
         print(torch.squeeze((predictions!=label).nonzero()))
