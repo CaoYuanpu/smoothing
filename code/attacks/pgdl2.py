@@ -227,9 +227,12 @@ class NegtiveEOTPGDL2(Attack):
         labels = label.repeat(n_trials)
         noises = torch.randn_like(x_batch, device=x_batch.device) * sigma
         predictions = self.model(x_batch, noise=noises).argmax(1)
+        indices = torch.squeeze((predictions!=label).nonzero())
         print((predictions!=label))
         print(torch.squeeze((predictions!=label).nonzero()))
         print(torch.sum(predictions!=label))
+        adv_noise = [noises[i] for i in indices ]
+        print(adv_noise.shape)
         input()
 
     def forward(self, images, labels):
