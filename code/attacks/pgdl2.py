@@ -229,7 +229,7 @@ class NegtiveEOTPGDL2(Attack):
         predictions = self.model(x_batch, noise=noises).argmax(1)
         print(labels)
         print(predictions)
-        print(labels=predictions)
+        print(labels==predictions)
         input()
     
     def forward(self, images, labels):
