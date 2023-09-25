@@ -224,7 +224,7 @@ class NegtiveEOTPGDL2(Attack):
     def get_negative_samples(self, x, label, sigma, n_trials=100):
         self.model.eval()
         x_batch = x.repeat((n_trials, 1, 1, 1))
-        labels = x.repeat(n_trials)
+        labels = label.repeat(n_trials)
         noises = torch.randn_like(x_batch, device=x_batch.device) * sigma
         predictions = self.model(x_batch, noise=noises).argmax(1)
         print(labels)
