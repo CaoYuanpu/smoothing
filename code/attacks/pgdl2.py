@@ -260,12 +260,13 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = torch.clamp(adv_images + delta, min=0, max=1).detach()
 
         for _ in range(self.steps):
-            print(adv_images.shape)
-            print(target_labels)
-            print(self.model.sigma)
-            input()
             negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma)
-            
+            if negtive_noises is None:
+                print('negtive noises is none')
+                input()
+                break
+            print(len(negtive_noises))
+            input()
             grad = torch.zeros_like(adv_images)
             adv_images.requires_grad = True
             
