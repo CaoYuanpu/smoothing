@@ -232,7 +232,7 @@ class NegtiveEOTPGDL2(Attack):
         print(torch.squeeze((predictions!=label).nonzero()))
         print(torch.sum(predictions!=label))
         adv_noise = [noises[i] for i in indices ]
-        print(adv_noise.shape)
+        print(len(adv_noise))
         input()
 
     def forward(self, images, labels):
