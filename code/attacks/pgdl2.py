@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+import random
 from .attack import Attack
 
 
@@ -230,7 +230,6 @@ class NegtiveEOTPGDL2(Attack):
         indices = torch.squeeze((predictions!=label).nonzero())
         if indices.shape == torch.Size([]):
             indices = indices.unsqueeze(dim=0)
-        print('indices:', indices)
         if len(indices) == 0:
             return None
         else:
@@ -265,9 +264,9 @@ class NegtiveEOTPGDL2(Attack):
         for _ in range(self.steps):
             negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma)
             if negtive_noises is None:
-                print('negtive noises is none')
-                input()
                 break
+            if len(negtive_noises) > self.eot_iter:
+                negtive_noises = random.sample(negtive_noises, self.eot_iter)
             print(len(negtive_noises))
             input()
             grad = torch.zeros_like(adv_images)
