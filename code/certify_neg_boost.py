@@ -91,7 +91,7 @@ if __name__ == "__main__":
             x_ = x.repeat((1, 1, 1, 1))
             target = torch.tensor(label, dtype=torch.int64)
             target = target.repeat((1))
-            atk = attack.NegtiveEOTPGDL2(boost_classifier, eps=radius, alpha=radius*2/10, steps=10, eot_iter=10, random_start=True)
+            atk = attack.NegtiveEOTPGDL2(boost_classifier, eps=radius, alpha=radius*2/100, steps=100, eot_iter=10, random_start=True)
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
             # negtive_noises = atk.get_negative_samples(x.cuda(), torch.tensor(label, dtype=torch.int64), sigma=args.sigma)
             x_adv = atk(x_.cuda(), target.cuda())
