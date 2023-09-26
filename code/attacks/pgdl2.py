@@ -277,8 +277,8 @@ class NegtiveEOTPGDL2(Attack):
                 break
             print('n of negative noises:', len(negtive_noises))
             input()
-            # if len(negtive_noises) > self.eot_iter:
-            #     negtive_noises = random.sample(negtive_noises, self.eot_iter)
+            if len(negtive_noises) > self.eot_iter:
+                negtive_noises = random.sample(negtive_noises, self.eot_iter)
 
             grad = torch.zeros_like(adv_images)
             adv_images.requires_grad = True
@@ -291,6 +291,7 @@ class NegtiveEOTPGDL2(Attack):
                 # Calculate loss
                 if self.targeted:
                     cost = -loss(outputs, target_labels)
+                    print('cost: ', cost)
                 else:
                     cost = loss(outputs, labels)
 
