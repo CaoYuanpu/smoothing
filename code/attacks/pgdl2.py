@@ -309,12 +309,13 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = adv_images.detach() + self.alpha * grad
 
             delta = adv_images - images
-            delta_norms = torch.norm(delta.view(batch_size, -1), p=2, dim=1)
-            factor = self.eps / delta_norms
-            factor = torch.min(factor, torch.ones_like(delta_norms))
-            delta = delta * factor.view(-1, 1, 1, 1)
+            # delta_norms = torch.norm(delta.view(batch_size, -1), p=2, dim=1)
+            # factor = self.eps / delta_norms
+            # factor = torch.min(factor, torch.ones_like(delta_norms))
+            # delta = delta * factor.view(-1, 1, 1, 1)
 
-            adv_images = torch.clamp(images + delta, min=0, max=1).detach()
+            # adv_images = torch.clamp(images + delta, min=0, max=1).detach()
+            adv_images = (images + delta).detach()
             print('2-norm delta: ', torch.linalg.norm(delta.detach()[0]))
             print()
         print('min: ', min_)
