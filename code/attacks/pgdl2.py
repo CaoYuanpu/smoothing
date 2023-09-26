@@ -228,6 +228,8 @@ class NegtiveEOTPGDL2(Attack):
         noises = torch.randn_like(x_batch, device=x_batch.device) * sigma
         predictions = self.model(x_batch, noise=noises).argmax(1)
         indices = torch.squeeze((predictions!=label).nonzero())
+        if indices.shape == torch.Size([]):
+            indices = indices.unsqueeze(dim=0)
         print('indices:', indices)
         if len(indices) == 0:
             return None
