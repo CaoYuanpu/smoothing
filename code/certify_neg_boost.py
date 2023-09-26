@@ -39,7 +39,6 @@ class BoostClassifier(nn.Module):
 
     def forward(self, x, noise=None):
         if noise is None:
-            print('no noise')
             noise = torch.randn_like(x, device=x.device) * self.sigma
         return base_classifier(x+noise)
     
@@ -92,7 +91,7 @@ if __name__ == "__main__":
             x_ = x.repeat((1, 1, 1, 1))
             target = torch.tensor(label, dtype=torch.int64)
             target = target.repeat((1))
-            atk = attack.NegtiveEOTPGDL2(boost_classifier, eps=radius, alpha=radius*2/10, steps=10, eot_iter=5, random_start=False)
+            atk = attack.NegtiveEOTPGDL2(boost_classifier, eps=radius, alpha=radius/10, steps=10, eot_iter=5, random_start=False)
             atk.set_mode_targeted_by_function(target_map_function=lambda images, labels:labels)
             # negtive_noises = atk.get_negative_samples(x.cuda(), torch.tensor(label, dtype=torch.int64), sigma=args.sigma)
             x_adv = atk(x_.cuda(), target.cuda())
