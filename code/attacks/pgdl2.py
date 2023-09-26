@@ -290,7 +290,6 @@ class NegtiveEOTPGDL2(Attack):
                 # Calculate loss
                 if self.targeted:
                     cost = -loss(outputs, target_labels)
-                    print('cost: ', cost)
                 else:
                     cost = loss(outputs, labels)
 
