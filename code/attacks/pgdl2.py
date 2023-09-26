@@ -273,7 +273,7 @@ class NegtiveEOTPGDL2(Attack):
 
         for _ in range(self.steps):
             negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma)
-            if negtive_noises is None:
+            if negtive_noises is None or len(negtive_noises) < 5:
                 break
             print('n of negative noises:', len(negtive_noises))
             input()
