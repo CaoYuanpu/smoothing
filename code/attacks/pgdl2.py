@@ -236,6 +236,15 @@ class NegtiveEOTPGDL2(Attack):
             adv_noise = [noises[i] for i in indices]
             return adv_noise
 
+    def get_logits(self, inputs, noise=None, labels=None, *args, **kwargs):
+        if self._normalization_applied:
+            inputs = self.normalize(inputs)
+        if noise is None:
+            logits = self.model(inputs)
+        else:
+            logits = self.model(inputs, noise)
+        return logits
+
     def forward(self, images, labels):
         r"""
         Overridden.
@@ -267,13 +276,17 @@ class NegtiveEOTPGDL2(Attack):
                 break
             if len(negtive_noises) > self.eot_iter:
                 negtive_noises = random.sample(negtive_noises, self.eot_iter)
-            print(len(negtive_noises))
-            input()
+
             grad = torch.zeros_like(adv_images)
             adv_images.requires_grad = True
             
-            for j in range(self.eot_iter):
-                outputs = self.get_logits(adv_images)
+            for j in range(len(negtive_noises)):
+                noise = negtive_noises[j]
+                print(noise.shape)
+                noise = noise.repeat(1, 1, 1, 1)
+                print(noise.shape)
+                input()
+                outputs = self.get_logits(adv_images, noise=noise)
 
                 # Calculate loss
                 if self.targeted:
