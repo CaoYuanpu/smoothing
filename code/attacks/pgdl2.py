@@ -274,7 +274,7 @@ class NegtiveEOTPGDL2(Attack):
         min_ = -1
         for _ in range(self.steps):
             adv_images_lst.append(adv_images.clone())
-            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=1000)
+            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=10000)
             if negtive_noises is None:
                 return adv_images
             print('n of negative noises:', len(negtive_noises))
