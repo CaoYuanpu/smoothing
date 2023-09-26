@@ -275,7 +275,7 @@ class NegtiveEOTPGDL2(Attack):
             negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma)
             if negtive_noises is None:
                 break
-            print('n of negative noises:', negtive_noises)
+            print('n of negative noises:', len(negtive_noises))
             input()
             if len(negtive_noises) > self.eot_iter:
                 negtive_noises = random.sample(negtive_noises, self.eot_iter)
