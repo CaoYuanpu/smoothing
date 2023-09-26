@@ -272,13 +272,13 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = torch.clamp(adv_images + delta, min=0, max=1).detach()
 
         for _ in range(self.steps):
-            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma)
-            if negtive_noises is None or len(negtive_noises) < 5:
+            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=500)
+            if negtive_noises is None:
                 break
             print('n of negative noises:', len(negtive_noises))
             input()
-            if len(negtive_noises) > self.eot_iter:
-                negtive_noises = random.sample(negtive_noises, self.eot_iter)
+            # if len(negtive_noises) > self.eot_iter:
+            #     negtive_noises = random.sample(negtive_noises, self.eot_iter)
 
             grad = torch.zeros_like(adv_images)
             adv_images.requires_grad = True
