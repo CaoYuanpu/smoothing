@@ -242,6 +242,7 @@ class NegtiveEOTPGDL2(Attack):
         if noise is None:
             logits = self.model(inputs)
         else:
+            print('get logist with loss')
             logits = self.model(inputs, noise)
         return logits
 
@@ -274,6 +275,8 @@ class NegtiveEOTPGDL2(Attack):
             negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma)
             if negtive_noises is None:
                 break
+            print('n of negative noises:', negtive_noises)
+            input()
             if len(negtive_noises) > self.eot_iter:
                 negtive_noises = random.sample(negtive_noises, self.eot_iter)
 
@@ -282,10 +285,7 @@ class NegtiveEOTPGDL2(Attack):
             
             for j in range(len(negtive_noises)):
                 noise = negtive_noises[j]
-                print(noise.shape)
                 noise = noise.repeat(1, 1, 1, 1)
-                print(noise.shape)
-                input()
                 outputs = self.get_logits(adv_images, noise=noise)
 
                 # Calculate loss
