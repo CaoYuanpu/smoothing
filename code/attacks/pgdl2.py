@@ -278,7 +278,6 @@ class NegtiveEOTPGDL2(Attack):
             if negtive_noises is None:
                 return adv_images
             print('n of negative noises:', len(negtive_noises))
-            input()
             if len(negtive_noises) < min_noises:
                 min_ = _
                 min_noises = len(negtive_noises)
@@ -317,6 +316,7 @@ class NegtiveEOTPGDL2(Attack):
 
             adv_images = torch.clamp(images + delta, min=0, max=1).detach()
             print('2-norm delta: ', torch.linalg.norm(delta.detach()[0]))
+            print()
         print('min: ', min_)
         # return adv_images
         return adv_images_lst[min_]
