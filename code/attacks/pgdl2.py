@@ -318,4 +318,4 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = torch.clamp(images + delta, min=0, max=1).detach()
         print('min: ', min_)
         # return adv_images
-        return adv_images_lst[min]
+        return adv_images_lst[min_]
