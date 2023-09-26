@@ -39,6 +39,7 @@ class BoostClassifier(nn.Module):
 
     def forward(self, x, noise=None):
         if noise is None:
+            print('no noise')
             noise = torch.randn_like(x, device=x.device) * self.sigma
         return base_classifier(x+noise)
     
