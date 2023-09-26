@@ -270,14 +270,14 @@ class NegtiveEOTPGDL2(Attack):
             delta *= r/n*self.eps
             adv_images = torch.clamp(adv_images + delta, min=0, max=1).detach()
         adv_images_lst = []
-        min_noises = 1000
+        min_noises = 100
         min_ = -1
         for _ in range(self.steps):
             adv_images_lst.append(adv_images.clone())
-            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=1000)
+            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=100)
             if negtive_noises is None:
                 return adv_images
-            print('n of negative noises:', len(negtive_noises))
+            # print('n of negative noises:', len(negtive_noises))
             if len(negtive_noises) < min_noises:
                 min_ = _
                 min_noises = len(negtive_noises)
@@ -309,15 +309,15 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = adv_images.detach() + self.alpha * grad
 
             delta = adv_images - images
-            # delta_norms = torch.norm(delta.view(batch_size, -1), p=2, dim=1)
-            # factor = self.eps / delta_norms
-            # factor = torch.min(factor, torch.ones_like(delta_norms))
-            # delta = delta * factor.view(-1, 1, 1, 1)
+            delta_norms = torch.norm(delta.view(batch_size, -1), p=2, dim=1)
+            factor = self.eps / delta_norms
+            factor = torch.min(factor, torch.ones_like(delta_norms))
+            delta = delta * factor.view(-1, 1, 1, 1)
 
-            # adv_images = torch.clamp(images + delta, min=0, max=1).detach()
-            adv_images = (images + delta).detach()
-            print('2-norm delta: ', torch.linalg.norm(delta.detach()[0]))
-            print()
-        print('min: ', min_)
-        # return adv_images
-        return adv_images_lst[min_]
+            adv_images = torch.clamp(images + delta, min=0, max=1).detach()
+
+        #     print('2-norm delta: ', torch.linalg.norm(delta.detach()[0]))
+        #     print()
+        # print('min: ', min_)
+        return adv_images
+        # return adv_images_lst[min_]
