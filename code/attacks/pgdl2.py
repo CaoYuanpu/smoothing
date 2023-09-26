@@ -277,8 +277,8 @@ class NegtiveEOTPGDL2(Attack):
                 break
             print('n of negative noises:', len(negtive_noises))
             input()
-            if len(negtive_noises) > self.eot_iter:
-                negtive_noises = random.sample(negtive_noises, self.eot_iter)
+            # if len(negtive_noises) > self.eot_iter:
+            #     negtive_noises = random.sample(negtive_noises, self.eot_iter)
 
             grad = torch.zeros_like(adv_images)
             adv_images.requires_grad = True
@@ -298,8 +298,8 @@ class NegtiveEOTPGDL2(Attack):
                 grad += torch.autograd.grad(cost, adv_images,
                                         retain_graph=False, create_graph=False)[0]
 
-            grad /= float(self.eot_iter)
-            
+            grad /= float(len(negtive_noises))
+
             grad_norms = torch.norm(grad.view(batch_size, -1), p=2, dim=1) + self.eps_for_division  # nopep8
             grad = grad / grad_norms.view(batch_size, 1, 1, 1)
             adv_images = adv_images.detach() + self.alpha * grad
