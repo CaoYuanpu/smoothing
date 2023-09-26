@@ -269,13 +269,18 @@ class NegtiveEOTPGDL2(Attack):
             r = torch.zeros_like(n).uniform_(0, 1)
             delta *= r/n*self.eps
             adv_images = torch.clamp(adv_images + delta, min=0, max=1).detach()
-
+        adv_images_lst = []
+        min_noises = 1000
+        min_ = -1
         for _ in range(self.steps):
+            adv_images_lst.append(adv_images.clone())
             negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=1000)
             if negtive_noises is None:
-                break
+                return adv_images
             print('n of negative noises:', len(negtive_noises))
             input()
+            if len(negtive_noises) < min_noises:
+                min_ = _
             # if len(negtive_noises) > self.eot_iter:
             #     negtive_noises = random.sample(negtive_noises, self.eot_iter)
 
@@ -310,5 +315,6 @@ class NegtiveEOTPGDL2(Attack):
             delta = delta * factor.view(-1, 1, 1, 1)
 
             adv_images = torch.clamp(images + delta, min=0, max=1).detach()
-
-        return adv_images
+        print('min: ', min_)
+        # return adv_images
+        return adv_images_lst[min]
