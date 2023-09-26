@@ -242,7 +242,6 @@ class NegtiveEOTPGDL2(Attack):
         if noise is None:
             logits = self.model(inputs)
         else:
-            print('get logist with loss')
             logits = self.model(inputs, noise)
         return logits
 
@@ -272,7 +271,7 @@ class NegtiveEOTPGDL2(Attack):
             adv_images = torch.clamp(adv_images + delta, min=0, max=1).detach()
 
         for _ in range(self.steps):
-            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=500)
+            negtive_noises = self.get_negative_samples(adv_images[0].clone(), target_labels[0], sigma=self.model.sigma, n_trials=1000)
             if negtive_noises is None:
                 break
             print('n of negative noises:', len(negtive_noises))
