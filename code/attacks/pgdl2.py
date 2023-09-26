@@ -281,6 +281,7 @@ class NegtiveEOTPGDL2(Attack):
             input()
             if len(negtive_noises) < min_noises:
                 min_ = _
+                min_noises = len(negtive_noises)
             # if len(negtive_noises) > self.eot_iter:
             #     negtive_noises = random.sample(negtive_noises, self.eot_iter)
 
